@@ -1,0 +1,138 @@
+<!--
+  FAQ content, grounded in the app's actual behavior (see index.html's
+  hero/how-it-works/pricing sections and the main app repo for the
+  underlying facts - this page just answers follow-up questions those
+  sections don't have room for).
+
+  Accordion is native <details>/<summary>, no JavaScript - consistent
+  with the rest of this site (see index.html's header comment).
+-->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FAQ — thankSnap</title>
+<meta name="description" content="Common questions about setting up, running, and paying for thankSnap.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:ital,opsz,wght@0,12..96,200..800;1,12..96,200..800&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap">
+    <a class="brand-lockup" href="/">
+      <svg class="logo-mark" viewBox="0 0 1573 1608" role="img" aria-label="thankSnap">
+        <rect x="104" y="100" width="1365" height="1400" rx="200" stroke="#0F6E56" stroke-width="200" stroke-linejoin="round"/>
+        <rect x="104" y="100" width="1365" height="1400" rx="200" fill="#1D9E75"/>
+        <rect x="208.65" y="263.33" width="910" height="145.83" rx="72.92" fill="#E1F5EE"/>
+        <rect opacity="0.5" x="208.65" y="702" width="455" height="145.83" rx="72.92" fill="#E1F5EE"/>
+        <rect opacity="0.75" x="208.65" y="482.67" width="682.5" height="145.83" rx="72.92" fill="#E1F5EE"/>
+        <ellipse cx="1267.09" cy="336.25" rx="71.09" ry="72.92" fill="#D9D9D9"/>
+        <ellipse opacity="0.5" cx="1267.09" cy="774.92" rx="71.09" ry="72.92" fill="#D9D9D9"/>
+        <ellipse opacity="0.75" cx="1267.09" cy="555.58" rx="71.09" ry="72.92" fill="#D9D9D9"/>
+        <ellipse cx="1267.66" cy="335.67" rx="28.44" ry="29.17" fill="#0F6E56"/>
+      </svg>
+      <span class="brand">thank<span class="accent">Snap</span></span>
+    </a>
+    <div class="nav-actions">
+      <a class="btn-ghost" href="/privacy">Privacy</a>
+      <a class="btn btn-primary" href="https://app.thanksnap.com">Get started</a>
+    </div>
+  </div>
+</nav>
+
+<header class="doc-hero">
+  <div class="wrap">
+    <span class="label">FAQ</span>
+    <h1>Questions, answered plainly.</h1>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="faq-list">
+    <details class="faq-item">
+      <summary>What does thankSnap actually do?</summary>
+      <p>It adds a one-question survey to your Shopify checkout's Thank you page - the screen every customer sees right after paying. You pick the question (or start from a template); their answer is saved against that order, and you see the results in a dashboard.</p>
+    </details>
+
+    <details class="faq-item">
+      <summary>How is this different from a post-purchase email survey?</summary>
+      <p>Timing. An email survey gets opened by a fraction of buyers, days after the purchase. The Thank you page is seen by every paying customer, immediately, while the reason they bought is still fresh - that's the whole reason response rates are higher this way.</p>
+    </details>
+
+    <details class="faq-item">
+      <summary>Will it slow down my checkout?</summary>
+      <p>No. The survey loads as part of Shopify's own checkout extension system, which is built to keep checkout fast - it doesn't add a redirect or an extra page.</p>
+    </details>
+
+    <details class="faq-item">
+      <summary>Do I need to edit my theme or write code?</summary>
+      <p>No. You add the thankSnap block once, in Settings &rarr; Checkout &rarr; Customize checkout - a visual editor, not code. See the "How it works" section on the <a href="/">home page</a> for the exact steps.</p>
+    </details>
+
+    <details class="faq-item">
+      <summary>What question types can I ask?</summary>
+      <p>Single choice, multiple choice, open text, rating, and yes/no. Use one of the built-in templates to start, or write your own question and options from scratch.</p>
+    </details>
+
+    <details class="faq-item">
+      <summary>Will every customer see the survey?</summary>
+      <p>Every customer who reaches the Thank you page will see it, as long as your current plan hasn't reached its monthly order limit (see pricing below) - if it has, the survey simply stops showing until the next month or an upgrade, nothing else in the app is affected.</p>
+    </details>
+
+    <details class="faq-item">
+      <summary>What happens if I go over my plan's order limit?</summary>
+      <p>The survey stops appearing on the Thank you page until either the next calendar month starts or you upgrade - everything else (your dashboard, past responses, settings) keeps working normally.</p>
+    </details>
+
+    <details class="faq-item">
+      <summary>Can I export my responses?</summary>
+      <p>Yes - every plan includes CSV export, one row per order and one column per question, so you can analyze it however you like outside the app.</p>
+    </details>
+
+    <details class="faq-item">
+      <summary>Can I change my question after customers have already answered?</summary>
+      <p>Yes, at any time. Past responses stay linked to the question they answered; editing the question going forward doesn't change what's already been recorded.</p>
+    </details>
+
+    <details class="faq-item">
+      <summary>Is my store's data secure?</summary>
+      <p>Access tokens are encrypted at rest, every database table has row-level security enabled, and all webhook traffic is signature-verified. See the <a href="/privacy">privacy policy</a> for the full picture of what's collected and how it's protected.</p>
+    </details>
+
+    <details class="faq-item">
+      <summary>What do you collect about my customers?</summary>
+      <p>Their survey answer and the order it's attached to - never their name, email, or phone number. Full detail is in the <a href="/privacy">privacy policy</a>.</p>
+    </details>
+
+    <details class="faq-item">
+      <summary>How do I change or cancel my plan?</summary>
+      <p>Billing is handled by Shopify directly - use the "Manage plan" button on the app's Billing page at any time to switch tiers or cancel.</p>
+    </details>
+  </div>
+</div>
+
+<section class="closer">
+  <div class="wrap">
+    <h2>Still have a question?</h2>
+    <p>Reach out and we'll help directly.</p>
+    <a class="btn btn-primary" href="mailto:[SUPPORT EMAIL, e.g. support@thanksnap.com]">Contact support</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>&copy; 2026 thankSnap</span>
+    <div class="footer-links">
+      <a href="/faq">FAQ</a>
+      <a href="/privacy">Privacy policy</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
