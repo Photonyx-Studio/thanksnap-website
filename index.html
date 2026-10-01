@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>thankSnap — Post-purchase survey for Shopify</title>
+<meta name="description" content="Ask one question on the Shopify Thank you page. Answers linked to the order, ready in your dashboard.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:ital,opsz,wght@0,12..96,200..800;1,12..96,200..800&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root {
+    --paper: #FFFFFF;
+    --paper-sunk: #F5FAF8;
+    --ink: #0E1A16;
+    --ink-soft: #4B6058;
+    --ink-faint: #7C948A;
+    --line: #D3E4DD;
+    --accent: #1D9E75;
+    --accent-deep: #0F6E56;
+    --mint: #E1F5EE;
+
+    --watermark: rgba(15,110,86,0.05);
+    --shadow: 0 18px 40px -22px rgba(14,26,22,0.28);
+    --shadow-sm: 0 1px 0 rgba(14,26,22,0.06);
+
+    /* Fixed (never flips with theme) - the receipt is a photographed white
+       paper artifact, not a themed UI surface, so its own ink/accent/line
+       colors stay put regardless of the viewer's light/dark preference. */
+    --receipt-ink: #0E1A16;
+    --receipt-ink-soft: #4B6058;
+    --receipt-ink-faint: #7C948A;
+    --receipt-line: #D3E4DD;
+    --receipt-accent: #1D9E75;
+    --receipt-accent-deep: #0F6E56;
+    --receipt-mint: #E1F5EE;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #0B1512;
+      --paper-sunk: #101E19;
+      --ink: #EAF6F1;
+      --ink-soft: #A9C4BA;
+      --ink-faint: #6E8A80;
+      --line: #23362E;
+      --accent: #34C795;
+      --accent-deep: #8FE9C4;
+      --mint: #123B30;
+
+      --watermark: rgba(52,199,149,0.07);
+      --shadow: 0 18px 40px -18px rgba(0,0,0,0.6);
+      --shadow-sm: 0 1px 0 rgba(0,0,0,0.5);
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0B1512;
+    --paper-sunk: #101E19;
+    --ink: #EAF6F1;
+    --ink-soft: #A9C4BA;
+    --ink-faint: #6E8A80;
+    --line: #23362E;
+    --accent: #34C795;
+    --accent-deep: #8FE9C4;
+    --mint: #123B30;
+
+    --watermark: rgba(52,199,149,0.07);
+    --shadow: 0 18px 40px -18px rgba(0,0,0,0.6);
+    --shadow-sm: 0 1px 0 rgba(0,0,0,0.5);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Manrope", system-ui, sans-serif;
+    margin: 0;
+  }
+  a { color: inherit; }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  h1, h2, h3 { font-family: "Bricolage Grotesque", system-ui, sans-serif; text-wrap: balance; margin: 0; font-weight: 700; }
+  .label {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.74rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent-deep);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6em;
+  }
+  .label::before { content: ""; width: 0.6em; height: 0.6em; border-radius: 50%; background: currentColor; }
+  .num { font-family: "IBM Plex Mono", monospace; font-variant-numeric: tabular-nums; }
+
+  .wrap { max-width: 1020px; margin: 0 auto; padding-inline: max(16px, 5vw); }
+  section { padding-block: 56px; }
+  section.sunk { background: var(--paper-sunk); }
+  .section-head { max-width: 58ch; }
+  .section-head h2 { margin-top: 12px; font-size: clamp(1.6rem, 2.8vw, 2.1rem); line-height: 1.15; }
+  .section-head p { margin-top: 10px; color: var(--ink-soft); line-height: 1.55; }
+
+  /* ---------- Nav ---------- */
+  .nav { padding-block: 22px; }
+  .nav .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .brand-lockup { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); }
+  .logo-mark { width: 30px; height: 30px; border-radius: 7px; display: block; }
+  .brand { font-family: "Bricolage Grotesque", system-ui, sans-serif; font-weight: 700; font-size: 1.3rem; letter-spacing: -0.01em; }
+  .brand .accent { color: var(--accent); }
+  .btn {
+    font-family: "Manrope", sans-serif;
+    font-weight: 700;
+    font-size: 0.92rem;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    padding: 0.8em 1.5em;
+    border-radius: 3px;
+  }
+  .btn-primary { background: var(--accent); color: #FFFFFF; }
+  .btn-primary:hover { background: var(--accent-deep); }
+  .btn-ghost { background: transparent; color: var(--ink-soft); font-size: 0.92rem; text-decoration: none; padding: 0.8em 0; }
+  .btn-ghost:hover { color: var(--accent-deep); }
+
+  /* ---------- Hero ---------- */
+  .hero { padding-block: 60px 68px; position: relative; overflow: hidden; }
+  .hero .wrap { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 52px; align-items: center; position: relative; z-index: 1; }
+  .hero h1 {
+    margin-top: 16px;
+    font-size: clamp(2.2rem, 4.6vw, 3.3rem);
+    line-height: 1.06;
+    letter-spacing: -0.015em;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent-deep); }
+  .hero p.lede { margin-top: 18px; font-size: 1.1rem; line-height: 1.55; color: var(--ink-soft); max-width: 40ch; }
+  .hero .btn-primary { margin-top: 28px; }
+
+  .mark {
+    position: absolute;
+    right: -50px;
+    top: -90px;
+    font-family: "Bricolage Grotesque", system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 24rem;
+    line-height: 1;
+    color: var(--watermark);
+    user-select: none;
+    z-index: 0;
+  }
+
+  /* ---- receipt card (fixed light palette, see --receipt-* tokens) ---- */
+  .receipt {
+    background: #FFFFFF;
+    color: var(--receipt-ink);
+    box-shadow: var(--shadow);
+    max-width: 360px;
+    margin-inline: auto;
+    transform: rotate(-2.5deg);
+    position: relative;
+  }
+  .receipt-top, .receipt-bottom { padding: 22px 24px; }
+  .receipt-top .order-no { font-family: "IBM Plex Mono", monospace; font-size: 0.85rem; color: var(--receipt-ink-faint); }
+  .receipt-top .order-line { display: flex; justify-content: space-between; margin-top: 10px; font-size: 0.95rem; }
+  .receipt-total {
+    margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--receipt-line);
+    display: flex; justify-content: space-between; font-weight: 700;
+  }
+  .receipt-divider { display: flex; align-items: center; gap: 10px; padding: 0 24px; }
+  .receipt-divider .rule { flex: 1; border-top: 1px dashed var(--receipt-line); }
+  .confirmed {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: "IBM Plex Mono", monospace; font-size: 0.7rem; letter-spacing: 0.05em; text-transform: uppercase;
+    color: var(--receipt-accent-deep);
+  }
+  .confirmed .dot-mark {
+    width: 16px; height: 16px; border-radius: 50%; background: var(--receipt-accent); color: #fff;
+    display: inline-flex; align-items: center; justify-content: center; font-size: 0.62rem;
+  }
+  .receipt-bottom .ask { font-family: "Bricolage Grotesque", system-ui, sans-serif; font-weight: 700; font-size: 1.05rem; }
+  .chip-row { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { font-size: 0.82rem; padding: 0.5em 0.9em; border: 1px solid var(--receipt-line); color: var(--receipt-ink-soft); }
+  .chip.picked { border-color: var(--receipt-accent); background: var(--receipt-mint); color: var(--receipt-accent-deep); font-weight: 600; }
+  .receipt-caption { text-align: center; font-size: 0.8rem; color: var(--ink-faint); margin-top: 20px; }
+
+  /* ---------- How it works ---------- */
+  .steps { margin-top: 32px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+  .step { border-top: 3px solid var(--accent); padding-top: 16px; }
+  .step .step-no { font-family: "IBM Plex Mono", monospace; font-size: 0.82rem; color: var(--accent-deep); }
+  .step h3 { font-size: 1.08rem; margin-top: 8px; }
+  .step p { margin-top: 8px; font-size: 0.93rem; color: var(--ink-soft); line-height: 1.55; }
+
+  /* ---------- Templates ---------- */
+  .stub-row { margin-top: 32px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .stub { background: var(--paper); border: 1px solid var(--line); padding: 18px 20px 20px; }
+  .stub .stub-name {
+    font-family: "IBM Plex Mono", monospace; font-size: 0.72rem; letter-spacing: 0.05em;
+    text-transform: uppercase; color: var(--accent-deep);
+  }
+  .stub .stub-q { margin-top: 8px; font-family: "Bricolage Grotesque", system-ui, sans-serif; font-weight: 700; font-size: 1.02rem; line-height: 1.28; }
+  .stub .stub-opts {
+    margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--line);
+    font-size: 0.83rem; color: var(--ink-soft); line-height: 1.55;
+  }
+
+  /* ---------- Pricing ---------- */
+  .price-row { margin-top: 32px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; }
+  .price-card { background: var(--paper); border: 1px solid var(--line); box-shadow: var(--shadow-sm); padding: 26px 24px; }
+  .price-card .tier-name { font-family: "IBM Plex Mono", monospace; font-size: 0.8rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-faint); }
+  .price-card .tier-price { margin-top: 10px; font-family: "IBM Plex Mono", monospace; font-variant-numeric: tabular-nums; font-size: 2.5rem; font-weight: 600; line-height: 1; }
+  .price-card .tier-price .per { font-size: 0.9rem; font-weight: 400; color: var(--ink-faint); }
+  .price-card .tier-cap { margin-top: 14px; padding-top: 14px; border-top: 1px dashed var(--line); font-size: 0.9rem; color: var(--ink-soft); }
+  .price-card .tier-cap b { color: var(--ink); font-family: "IBM Plex Mono", monospace; }
+
+  .feature-list { margin: 26px 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px 28px; }
+  .feature-list li {
+    list-style: none; font-size: 0.92rem; color: var(--ink-soft);
+    padding-left: 1.3em; position: relative; line-height: 1.5;
+  }
+  .feature-list li::before { content: "\2713"; position: absolute; left: 0; color: var(--accent-deep); font-weight: 700; }
+
+  /* ---------- Closing ---------- */
+  .closer { text-align: left; padding-block: 64px; }
+  .closer h2 { font-size: clamp(1.7rem, 3.2vw, 2.2rem); }
+  .closer p { margin-top: 12px; color: var(--ink-soft); max-width: 50ch; }
+  .closer .btn-primary { margin-top: 22px; }
+
+  footer { border-top: 1px solid var(--line); padding-block: 24px; }
+  footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; font-size: 0.82rem; color: var(--ink-faint); }
+
+  @media (max-width: 900px) {
+    .stub-row { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 760px) {
+    .hero .wrap { grid-template-columns: 1fr; }
+    .steps { grid-template-columns: 1fr; }
+    .stub-row { grid-template-columns: 1fr; }
+    .feature-list { grid-template-columns: 1fr; }
+    .mark { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap">
+    <a class="brand-lockup" href="#">
+      <svg class="logo-mark" viewBox="0 0 1573 1608" role="img" aria-label="thankSnap">
+        <rect x="104" y="100" width="1365" height="1400" rx="200" stroke="#0F6E56" stroke-width="200" stroke-linejoin="round"/>
+        <rect x="104" y="100" width="1365" height="1400" rx="200" fill="#1D9E75"/>
+        <rect x="208.65" y="263.33" width="910" height="145.83" rx="72.92" fill="#E1F5EE"/>
+        <rect opacity="0.5" x="208.65" y="702" width="455" height="145.83" rx="72.92" fill="#E1F5EE"/>
+        <rect opacity="0.75" x="208.65" y="482.67" width="682.5" height="145.83" rx="72.92" fill="#E1F5EE"/>
+        <ellipse cx="1267.09" cy="336.25" rx="71.09" ry="72.92" fill="#D9D9D9"/>
+        <ellipse opacity="0.5" cx="1267.09" cy="774.92" rx="71.09" ry="72.92" fill="#D9D9D9"/>
+        <ellipse opacity="0.75" cx="1267.09" cy="555.58" rx="71.09" ry="72.92" fill="#D9D9D9"/>
+        <ellipse cx="1267.66" cy="335.67" rx="28.44" ry="29.17" fill="#0F6E56"/>
+      </svg>
+      <span class="brand">thank<span class="accent">Snap</span></span>
+    </a>
+    <div style="display:flex; align-items:center; gap:22px;">
+      <a class="btn-ghost" href="#pricing">Pricing</a>
+      <a class="btn btn-primary" href="https://app.thanksnap.com">Get started</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <span class="mark" aria-hidden="true">&#10003;</span>
+  <div class="wrap">
+    <div>
+      <span class="label">Post-purchase survey for Shopify</span>
+      <h1>The receipt is printed.<br>Ask <em>why</em> before they close the tab.</h1>
+      <p class="lede">One question on the Thank you page. Answers linked to the order, ready in your dashboard.</p>
+      <a class="btn btn-primary" href="https://app.thanksnap.com">Get started</a>
+    </div>
+
+    <div>
+      <div class="receipt" aria-hidden="true">
+        <div class="receipt-top">
+          <div class="order-no">ORDER #10482</div>
+          <div class="order-line"><span>Ridgeline Trail Jacket</span><span class="num">$128.00</span></div>
+          <div class="receipt-total"><span>Total</span><span class="num">$134.00</span></div>
+        </div>
+        <div class="receipt-divider">
+          <span class="rule"></span>
+          <span class="confirmed"><span class="dot-mark">&#10003;</span> Confirmed</span>
+          <span class="rule"></span>
+        </div>
+        <div class="receipt-bottom">
+          <div class="ask">How did you hear about us?</div>
+          <div class="chip-row">
+            <span class="chip picked">Instagram</span>
+            <span class="chip">Google search</span>
+            <span class="chip">Friend or family</span>
+          </div>
+        </div>
+      </div>
+      <p class="receipt-caption">What a customer sees, seconds after paying</p>
+    </div>
+  </div>
+</header>
+
+<section id="how-it-works">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="label">How it works</span>
+      <h2>Three steps, and it runs itself.</h2>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-no">01</div>
+        <h3>Add the block once</h3>
+        <p>In Settings &rarr; Checkout &rarr; Customize checkout, drop the thankSnap block onto the Thank you page. No theme code.</p>
+      </div>
+      <div class="step">
+        <div class="step-no">02</div>
+        <h3>Ask one good question</h3>
+        <p>Single choice, multiple choice, text, rating, or yes/no &mdash; write your own or start from a template.</p>
+      </div>
+      <div class="step">
+        <div class="step-no">03</div>
+        <h3>Answers land on the order</h3>
+        <p>Every response is saved against its order number, exportable as a CSV whenever you want to dig in.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sunk" id="templates">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="label">Templates</span>
+      <h2>Start from a template, or write your own.</h2>
+    </div>
+    <div class="stub-row">
+      <div class="stub">
+        <div class="stub-name">Classic attribution</div>
+        <div class="stub-q">How did you hear about us?</div>
+        <div class="stub-opts">TV &middot; Podcast &middot; Friend or family &middot; Social media &middot; Search engine</div>
+      </div>
+      <div class="stub">
+        <div class="stub-name">Social-first</div>
+        <div class="stub-q">Where did you discover us?</div>
+        <div class="stub-opts">Instagram &middot; TikTok &middot; Facebook &middot; YouTube &middot; Google search</div>
+      </div>
+      <div class="stub">
+        <div class="stub-name">Marketing channels</div>
+        <div class="stub-q">What brought you to our store today?</div>
+        <div class="stub-opts">Google ads &middot; Email newsletter &middot; Influencer &middot; Word of mouth</div>
+      </div>
+      <div class="stub">
+        <div class="stub-name">Purchase satisfaction</div>
+        <div class="stub-q">How likely are you to shop with us again?</div>
+        <div class="stub-opts">Very likely &middot; Likely &middot; Not sure &middot; Unlikely</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="label">Pricing</span>
+      <h2>Priced on orders, not features.</h2>
+      <p>Every plan includes the same features below. You only pay for volume.</p>
+    </div>
+    <div class="price-row">
+      <div class="price-card">
+        <div class="tier-name">Seed</div>
+        <div class="tier-price num">$0<span class="per"> /month</span></div>
+        <div class="tier-cap">Up to <b>100</b> orders/month</div>
+      </div>
+      <div class="price-card">
+        <div class="tier-name">Starter</div>
+        <div class="tier-price num">$19<span class="per"> /month</span></div>
+        <div class="tier-cap">Up to <b>1,000</b> orders/month</div>
+      </div>
+      <div class="price-card">
+        <div class="tier-name">Growth</div>
+        <div class="tier-price num">$49<span class="per"> /month</span></div>
+        <div class="tier-cap">Up to <b>5,000</b> orders/month</div>
+      </div>
+    </div>
+    <ul class="feature-list">
+      <li>Single choice, multiple choice, open text, rating, and yes/no questions</li>
+      <li>Premade templates or a drag-and-drop custom builder</li>
+      <li>One-click block on the Thank you page &mdash; no theme code</li>
+      <li>Every response linked to its order, searchable in the dashboard</li>
+      <li>CSV export, one row per order</li>
+      <li>Response-rate tracking out of the box</li>
+    </ul>
+  </div>
+</section>
+
+<section class="closer sunk">
+  <div class="wrap">
+    <h2>Ask while the ink is still wet.</h2>
+    <p>Set it up once in the checkout editor. Every order after that carries a small, honest signal about where it came from.</p>
+    <a class="btn btn-primary" href="https://app.thanksnap.com">Get started</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>&copy; 2026 thankSnap</span>
+    <span>Built for the Shopify checkout</span>
+  </div>
+</footer>
+
+</body>
+</html>
