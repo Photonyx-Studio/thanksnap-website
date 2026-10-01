@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1573 1608" role="img" aria-label="thankSnap">
+  <rect x="104" y="100" width="1365" height="1400" rx="200" stroke="#0F6E56" stroke-width="200" stroke-linejoin="round"/>
+  <rect x="104" y="100" width="1365" height="1400" rx="200" fill="#1D9E75"/>
+  <rect x="208.65" y="263.33" width="910" height="145.83" rx="72.92" fill="#E1F5EE"/>
+  <rect opacity="0.5" x="208.65" y="702" width="455" height="145.83" rx="72.92" fill="#E1F5EE"/>
+  <rect opacity="0.75" x="208.65" y="482.67" width="682.5" height="145.83" rx="72.92" fill="#E1F5EE"/>
+  <ellipse cx="1267.09" cy="336.25" rx="71.09" ry="72.92" fill="#D9D9D9"/>
+  <ellipse opacity="0.5" cx="1267.09" cy="774.92" rx="71.09" ry="72.92" fill="#D9D9D9"/>
+  <ellipse opacity="0.75" cx="1267.09" cy="555.58" rx="71.09" ry="72.92" fill="#D9D9D9"/>
+  <ellipse cx="1267.66" cy="335.67" rx="28.44" ry="29.17" fill="#0F6E56"/>
+</svg>
